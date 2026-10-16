@@ -1,4 +1,3 @@
-
 import tomllib
 from pathlib import Path
 
@@ -47,12 +46,14 @@ def check_config(config):
         if run["steps_per_orbit"] <= 0:
             raise ValueError("steps_per_orbit must be > 0")
         run["h"] = circular_period / run["steps_per_orbit"]
+        del run["steps_per_orbit"]
     elif not has_h:
         raise ValueError("Missing h or steps_per_orbit")
     if has_orbits:
         if run["orbits"] <= 0:
             raise ValueError("orbits must be > 0")
         run["T"] = circular_period * run["orbits"]
+        del run["orbits"]
     elif not has_T:
         raise ValueError("Missing T or orbits")
     return s
