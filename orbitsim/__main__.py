@@ -1,7 +1,8 @@
 import argparse
 import sys
-
 from orbitsim.config import load_config, check_config
+from .simulation import run_simulation
+from .plotting import save_sim
 
 def main(argv=None):
   parser = argparse.ArgumentParser(prog = "orbitsim")
@@ -23,7 +24,8 @@ def main(argv=None):
     return 1
 
   if args.command == "run":
-    print(f"Config OK: {args.config}")
+    run = run_simulation(config)
+    save = save_sim(config, run, args.config)
     return 0
   if args.command == "sweep":
     print("Sweep support will be added later in M9")

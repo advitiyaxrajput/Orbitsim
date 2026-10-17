@@ -1,4 +1,5 @@
 import numpy as np
+import time
 from .config import check_config
 from .physics import accel, circular_start
 from .integrators import euler
@@ -16,8 +17,10 @@ def run_simulation(config):
   method = run["method"]
 
   #obtain number of rounds and correct step size
-  N = round(T/h)
-  h = T/N
+  N = round(T / h)
+  if N < 1:
+      raise ValueError("Simulation must have at least one step")
+  h = T / N
 
   #initiallise the initial state
   r_init = np.linalg.norm(r0)
@@ -31,6 +34,7 @@ def run_simulation(config):
   positions[0] = r
   velocities[0] = v
 
+  start = time.perf_counter()
   #define acceleration function for integrator
   def acceleration(pos):
     return accel(pos, mu)
@@ -49,16 +53,18 @@ def run_simulation(config):
     positions[k+1] = r
     velocities[k+1] = v
 
+  wall_time = time.perf_counter() - start
   save_every = run.get("save_every", 1)
   save_idx = list(range(0, N + 1, save_every))
 
   if save_idx[-1] != N:
     save_idx.append(N)
-
+  
   return {
     "t": t[save_idx],
     "r": positions[save_idx],
     "v": velocities[save_idx],
+    "wall_time": wall_time
   }
   
   
