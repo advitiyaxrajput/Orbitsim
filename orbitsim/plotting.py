@@ -109,11 +109,36 @@ def drift_plot(config, results, path):
   plt.close(fig)
   
   return ax
-  
-  
-  
 
-  
-  
+def sweep_orbit_plot(sweep_results, path):
+  fig, ax = plt.subplots()
+  for item in sweep_results:
+    results = item["results"]
+    rx = results["r"][:, 0]
+    ry = results["r"][:, 1]
+    h = item["h"]
+    ax.plot(rx, ry, label=f"h = {h:.4g}")
+  ax.plot(0, 0, "ko", label="central body")
+  ax.set_xlabel("x")
+  ax.set_ylabel("y")
+  ax.set_title("Orbit comparison across sizes")
+  ax.set_aspect("equal")
+  ax.legend()
 
+  fig.savefig(path)
+  plt.close(fig)
   
+def sweep_drift_plot(sweep_results, path):
+  fig, ax = plt.subplots()
+  step_sizes = [item["h"] for item in sweep_results]
+  final_drifts = [
+    item["final_energy_drift"] for item in sweep_results
+  ]
+  ax.loglog(step_sizes, final_drifts, "o-", label="final energy drift")
+  ax.set_xlabel("step Size h")
+  ax.set_ylabel("Final Relative Energy Drift")
+  ax.set_title("Energy Drift vs Step Size")
+  ax.legend()
+
+  fig.savefig(path)
+  plt.close(fig)

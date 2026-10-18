@@ -6,7 +6,6 @@ def load_config(path: str | Path) -> dict:
         config = tomllib.load(file)
     return config
 
-
 def check_config(config):
     import math
     s = dict(config)
@@ -27,7 +26,7 @@ def check_config(config):
     r0_mag = math.hypot(*r0) if isinstance(r0, list) else abs(r0)
     if r0_mag <= R:
         raise ValueError(f"r0 must have magnitude > R, got {r0_mag}")
-    if method not in ("euler", "verlet", "rk4"):
+    if method not in ("euler", "symplectic_euler", "verlet", "rk4"):
         raise ValueError(f"unknown method: {method}")
     has_h = "h" in run
     has_steps = "steps_per_orbit" in run
