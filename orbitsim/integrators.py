@@ -16,8 +16,14 @@ def symplectic_euler(r, v, h, accel):
   r_next = r0 + h*v_next
   return r_next, v_next
 
-def verlet():
-  pass
+def verlet(r, v, h, accel):
+  r0 = np.asarray(r, dtype = np.float64)
+  v0 = np.asarray(v, dtype = np.float64)
+  a0 = accel(r0)
+  r_next = r0 + h*v0 + 0.5*(h**2)*a0
+  a_next = accel(r_next)
+  v_next = v0 + 0.5*h*(a0+a_next)
+  return r_next, v_next
 
 def rk4():
   pass
