@@ -4,6 +4,9 @@ import datetime as dt
 import json
 import shutil
 from pathlib import Path
+import matplotlib 
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 from .diagnostics import results_energy, energy_initial, energy_drift, results_hz, hz_initial, hz_drift
 
 def save_sim(config, results, config_path):
@@ -14,14 +17,11 @@ def save_sim(config, results, config_path):
   mu = config["body"]["mu"]
   r0 = config["initial"]["r0"]
   run = config["run"]
-  h = run["h"]
-  T = run["T"]
-  
-  #obtain number of rounds and correct step size
-  N = round(T / h)
+  h = results["h"]
+  T = results["T"]
+  N = results["N"]
   if N < 1:
       raise ValueError("Simulation must have at least one step")
-  h = T / N
   
   method = run["method"]
   name = f"{timestamp}_{method}_h{h:.6g}"
@@ -62,13 +62,54 @@ def save_sim(config, results, config_path):
     "max_energy_drift": max_energy_drift,
     "final_hz_drift": final_hz_drift,
     "max_hz_drift": max_hz_drift,
-    "wall_time": wall_time,
+    "wall_time": wall_time
   }
   with open(folder/"summary.json", "w") as fh:
     json.dump(summary, fh, indent=2)
   shutil.copyfile(config_path, folder / "config.toml")
 
   return folder
+  
+def orbit_plot(results, path):
+  rx = results["r"][:, 0]
+  ry = results["r"][:, 1]
+  fig, ax = plt.subplots()
+  ax.plot(rx, ry, label="position")
+  ax.plot(0, 0, "o")
+  ax.plot(rx[0], ry[0], "s")
+  ax.set_xlabel("position X")
+  ax.set_ylabel("position Y")
+  ax.set_title("Trajectory")
+  ax.set_aspect("equal")
+  ax.legend()
+  fig.savefig(path)
+  plt.close(fig)
+  return ax
+
+def drift_plot(config, results, path):
+  t = results["t"]
+  T = results["T"]
+  mu = config["body"]["mu"]
+  time = t/T
+  
+  e = results_energy(results, mu)
+  h_z = results_hz(results)
+  
+  e_drift = energy_drift(e)
+  hz_drift_values = hz_drift(h_z)
+  
+  fig, ax = plt.subplots()
+  ax.plot(time, e_drift, label="relative energy drift")
+  ax.plot(time, hz_drift_values, label="relative h_z drift")
+  ax.set_yscale("log")
+  ax.set_ylabel("drift")
+  ax.set_xlabel("time")
+  ax.legend()
+  fig.savefig(path)
+  plt.close(fig)
+  
+  return ax
+  
   
   
 

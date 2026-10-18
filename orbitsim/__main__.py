@@ -2,7 +2,7 @@ import argparse
 import sys
 from orbitsim.config import load_config, check_config
 from .simulation import run_simulation
-from .plotting import save_sim
+from .plotting import save_sim, drift_plot, orbit_plot
 
 def main(argv=None):
   parser = argparse.ArgumentParser(prog = "orbitsim")
@@ -18,14 +18,15 @@ def main(argv=None):
 
   try:
     config = load_config(args.config)
-    config = check_config(config)
   except (ValueError, KeyError) as error:
     print(f"error: {error}", file=sys.stderr)
     return 1
 
   if args.command == "run":
-    run = run_simulation(config)
-    save = save_sim(config, run, args.config)
+    results = run_simulation(config)
+    folder = save_sim(config, results, args.config)
+    orbit_plot(results, folder / "orbit.png")
+    drift_plot(config, results, folder / "drift.png")
     return 0
   if args.command == "sweep":
     print("Sweep support will be added later in M9")
