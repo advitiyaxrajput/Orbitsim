@@ -7,7 +7,7 @@ from pathlib import Path
 import matplotlib 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from .diagnostics import results_energy, energy_initial, energy_drift, results_hz, hz_initial, hz_drift
+from .diagnostics import results_energy, energy_initial, energy_drift, results_hz, hz_initial, hz_drift, bound_status
 
 def save_sim(config, results, config_path):
   when = dt.datetime.now()
@@ -30,6 +30,8 @@ def save_sim(config, results, config_path):
   folder.mkdir(parents=True, exist_ok=False)
 
   t = results["t"]
+  r = results["r"]
+  v = results["v"]
   rx = results["r"][:, 0]
   ry = results["r"][:, 1]
   vx = results["v"][:, 0]
@@ -41,6 +43,7 @@ def save_sim(config, results, config_path):
   h0 = float(hz_initial(results))
   e_drift = energy_drift(e)
   hz_drift_values = hz_drift(h_z)
+  s = bound_status(r[0], v[0], mu)
   
   final_energy_drift = float(e_drift[-1])
   max_energy_drift = float(np.max(e_drift))
@@ -62,7 +65,8 @@ def save_sim(config, results, config_path):
     "max_energy_drift": max_energy_drift,
     "final_hz_drift": final_hz_drift,
     "max_hz_drift": max_hz_drift,
-    "wall_time": wall_time
+    "wall_time": wall_time,
+    "status": s
   }
   with open(folder/"summary.json", "w") as fh:
     json.dump(summary, fh, indent=2)

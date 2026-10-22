@@ -32,3 +32,9 @@ def hz_drift(hz):
   if h0 == 0:
     raise ValueError("Cannot caluclate relative angular momentum drift when inital angular momentum is 0")
   return np.abs(hz-h0) / abs(h0)
+
+def bound_status(r, v, mu):
+  e = energy(r, v, mu)
+  if e < 0:
+    return "bound"
+  return "unbound"

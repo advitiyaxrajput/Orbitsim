@@ -9,7 +9,6 @@ def accel(r, mu):
 def energy(r, v, mu):
   r = np.asarray(r, dtype = np.float64)
   absr = np.linalg.norm(r)
-  
   v = np.asarray(v, dtype = np.float64)
   absv = np.linalg.norm(v)
   Ke = (absv**2)/2
