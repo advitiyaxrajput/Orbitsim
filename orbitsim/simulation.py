@@ -1,7 +1,7 @@
 import numpy as np
 import time
 from .config import check_config
-from .physics import accel, circular_start
+from .physics import accel, circular_start, elliptical_start
 from .integrators import euler, symplectic_euler, verlet, rk4
 
 METHODS = {"euler": euler, "symplectic_euler": symplectic_euler, "verlet": verlet, "rk4":rk4}
@@ -16,7 +16,6 @@ def run_simulation(config):
 
   #retrieve values
   mu = config["body"]["mu"]
-  r0 = config["initial"]["r0"]
   run = config["run"]
 
   h = run["h"]
@@ -31,8 +30,16 @@ def run_simulation(config):
   h = T / N
 
   #initiallise the initial state
-  r_init = np.linalg.norm(r0)
-  r, v = circular_start(mu, r_init)
+  initial = config["initial"]
+  scenario = initial["scenario"]
+
+  if scenario == "circular":
+    r_init = np.linalg.norm(initial["r0"])
+    r, v = circular_start(mu, r_init)
+  elif scenario == "elliptical":
+    rp = initial["rp"]
+    e = initial["e"]
+    r, v = elliptical_start(mu, rp, e)
 
   #create arrays to store the future values recieved through the integrators
   positions = np.zeros((N+1, 2), dtype = np.float64)

@@ -15,7 +15,6 @@ def save_sim(config, results, config_path):
 
   #retrieve values
   mu = config["body"]["mu"]
-  r0 = config["initial"]["r0"]
   run = config["run"]
   h = results["h"]
   T = results["T"]

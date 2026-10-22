@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 def accel(r, mu):
   r = np.asarray(r, dtype = np.float64)
@@ -27,5 +28,10 @@ def circular_start(mu, r0):
   v = np.array([0.0, speed], dtype=np.float64)
   return r, v
 
+def elliptical_start(mu, rp, e):
+  r = np.asarray([rp, 0], dtype = np.float64)
+  speed = math.sqrt((mu*(1+e))/rp)
+  vp = np.asarray([0, speed], dtype = np.float64)
+  return r, vp
   
   
