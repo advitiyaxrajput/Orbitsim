@@ -1,0 +1,13 @@
+[body]
+mu = 4.0
+R = 1.0
+
+[initial]
+scenario = "circular"
+r0 = [1.0, 1.0]
+
+[run]
+method = "verlet"
+steps_per_orbit = 1000
+orbits = 5
+save_every = 10

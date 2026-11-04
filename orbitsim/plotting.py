@@ -7,7 +7,7 @@ from pathlib import Path
 import matplotlib 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from .diagnostics import results_energy, energy_initial, energy_drift, results_hz, hz_initial, hz_drift, bound_status
+from .diagnostics import *
 
 def save_sim(config, results, config_path):
   when = dt.datetime.now()
@@ -35,6 +35,7 @@ def save_sim(config, results, config_path):
   ry = results["r"][:, 1]
   vx = results["v"][:, 0]
   vy = results["v"][:, 1]
+  measured_period = period(t, rx, ry)
   wall_time = results["wall_time"]
   e = results_energy(results, mu)
   e0 = float(energy_initial(results, mu))
@@ -64,6 +65,7 @@ def save_sim(config, results, config_path):
     "max_energy_drift": max_energy_drift,
     "final_hz_drift": final_hz_drift,
     "max_hz_drift": max_hz_drift,
+    "measured_period": measured_period,
     "wall_time": wall_time,
     "status": s
   }

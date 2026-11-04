@@ -38,3 +38,25 @@ def bound_status(r, v, mu):
   if e < 0:
     return "bound"
   return "unbound"
+
+def period(t, x, y):
+  t = np.asarray(t, dtype=np.float64)
+  x = np.asarray(x, dtype=np.float64)
+  y = np.asarray(y, dtype=np.float64)
+  if len(t) != len(x) or len(t) != len(y):
+    raise ValueError("t, x and y must have equal length")
+  if len(t) < 2:
+    return None
+  crossing_times = []
+  for i in range(len(t)-1):
+    if y[i] <0 and y[i+1] >=0:
+      fraction = -y[i] / (y[i+1]-y[i])
+      crossing_time = t[i] + fraction * (t[i+1]-t[i])
+      crossing_x = x[i] + fraction * (x[i+1]-x[i])
+      if crossing_x >0:
+        crossing_times.append(crossing_time)
+  if len(crossing_times) <2:
+    return None
+  intervals = np.diff(crossing_times)
+  return float(np.mean(intervals))
+  
